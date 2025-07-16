@@ -1,0 +1,32 @@
+# Plus d'information sur la mise en place et l'utilisation de ce fichier de configuration :
+# - https://medium.com/@agusmahari/docker-how-to-install-postgresql-using-docker-compose-d646c793f216
+services:
+  postgres:
+    # Nom du conteneur qui sera créé
+    container_name: cogib_container_final
+    # Image de base utilisée (vous pouvez changer la version en vous référant au Docker Hub : https://hub.docker.com/)
+    image: postgres:17.2
+    # Variables d'environnement qui seront utilisées pour configurer le conteneur
+    environment:
+      # Utilisateur super admin ! Attentation !
+      - POSTGRES_USER=${POSTGRES_USER}
+      # Mot de passe du super admin, super sensible.
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      # Nom d'une base de données créée au lancement du conteneur
+      - POSTGRES_DB=cogib
+    # Redirection de port "local:conteneur"
+    ports:
+      - "5426:5432"
+    # Le "docker engine" tente systématiquement de redémarrer le conteneur
+    # de plus, le conteneur est démarrer automatiquement au lancement du "doker engine"
+    restart: none
+    # Création du volume permettant d'ajouter le script de création de la base de données au conteneur Docker
+    volumes:
+      - ./DB/1-USER_TABLE.sql:/docker-entrypoint-initdb.d/1-USER_TABLE.sql
+      -  ./DB/2-user_creation.sql:/docker-entrypoint-initdb.d/2-user_creation.sql
+      -  ./DB/3-cogip-supply-postgre.sql:/docker-entrypoint-initdb.d/3-cogip.sql
+      -  ./DB/4-item_audit.sql:/docker-entrypoint-initdb.d/4-item_audit.sql
+      -  ./DB/5-items_to_order.sql:/docker-entrypoint-initdb.d/5-items_to_order.sql
+      -  ./DB/6-fonctions_etc.sql:/docker-entrypoint-initdb.d/6-fonctions_etc.sql
+      -  ./DB/7-fonctions_declencheurs.sql:/docker-entrypoint-initdb.d/7-fonctions_declencheurs.sql
+      -  ./DB/8-declencheurs.sql:/docker-entrypoint-initdb.d/8-declencheurs.sql
